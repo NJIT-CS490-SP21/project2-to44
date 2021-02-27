@@ -1,22 +1,23 @@
 import logo from './logo.svg';
 import './App.css';
-import { ListItem } from './ListItem.js';
+import Board from './Board'
 import { useState, useRef, useEffect } from 'react';
 import io from 'socket.io-client';
 
 const socket = io(); // Connects to socket connection
 
 function App() {
-  const [messages, setMessages] = useState([]); // State variable, list of messages
+  const [player, setPlayer] = useState(null)
+  const [players, setPlayers] = useState([]); // State variable, list of messages
   const inputRef = useRef(null); // Reference to <input> element
 
   function onClickButton() {
     if (inputRef != null) {
-      const message = inputRef.current.value;
+      const name = inputRef.current.value;
       // If your own client sends a message, we add it to the list of messages to 
       // render it on the UI.
-      setMessages(prevMessages => [...prevMessages, message]);
-      socket.emit('chat', { message: message });
+      setPlayer(prevPlayer => name);
+      socket.emit('login', { name: name });
     }
   }
 
@@ -26,25 +27,25 @@ function App() {
   useEffect(() => {
     // Listening for a chat event emitted by the server. If received, we
     // run the code in the function that is passed in as the second arg
-    socket.on('chat', (data) => {
-      console.log('Chat event received!');
-      console.log(data);
+    socket.on('connected', (data) => {
       // If the server sends a message (on behalf of another client), then we
       // add it to the list of messages to render it on the UI.
-      setMessages(prevMessages => [...prevMessages, data.message]);
+      setPlayers(data)
     });
   }, []);
+  
+  if (player) {
+    return ( <Board play={player} players={players} /> )
+  }
 
+  
   return (
     <div>
-      <h1>Chat Messages</h1>
-      Enter message here: <input ref={inputRef} type="text" />
-      <button onClick={onClickButton}>Send</button>
-      <ul>
-        {messages.map((item, index) => <ListItem key={index} name={item} />)}
-      </ul>
+      <h3>Name: </h3>
+      <input ref={inputRef} type="text" />
+      <a href="#" onClick={() => onClickButton() }>play!</a>
     </div>
-  );
+  )
 }
 
 export default App;

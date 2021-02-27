@@ -8,6 +8,7 @@ const socket = io()
 function Board(props) {
     const [marks, setMarks] = useState(0)
     const [board, setBoard] = useState(Array(3).fill(Array(3).fill('')))
+    const {player, players} = props
 
     const onClickBox = (row, col) => {
         markBox(row, col)
