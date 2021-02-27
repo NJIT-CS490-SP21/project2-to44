@@ -35,7 +35,7 @@ function App() {
   }, []);
   
   if (player) {
-    return ( <Board play={player} players={players} /> )
+    return ( <Board player={player} players={players} /> )
   }
 
   

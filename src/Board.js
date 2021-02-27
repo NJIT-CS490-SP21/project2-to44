@@ -9,10 +9,20 @@ function Board(props) {
     const [marks, setMarks] = useState(0)
     const [board, setBoard] = useState(Array(3).fill(Array(3).fill('')))
     const {player, players} = props
+    const [x, o] = players;
+    
+    
 
     const onClickBox = (row, col) => {
-        markBox(row, col)
-        socket.emit('move', { row: row, col: col })
+        if (is_turn()) {
+            markBox(row, col)
+            socket.emit('move', { row: row, col: col })
+        }
+    }
+    
+    const is_turn = () => {
+        if (x != player && o != player) return false
+        return (x == player && ((marks % 2) == 0)) || (o == player && ((marks % 2) == 1))
     }
 
     const markBox = (row, col) => {
