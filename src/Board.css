@@ -12,3 +12,8 @@
   border: 1px solid black; /* Shows the lines in the CSS grid */
   justify-content: center;
 }
+
+.boardContainer {
+  display: flex;
+  flex-direction: row;
+}

@@ -57,10 +57,28 @@ function Board(props) {
 
         return items
     })()
+    
+    const spectators = (() => {
+        let items = []
+        return players.slice(2).map(el => <li>{el}</li>)
+    })()
 
     return (
-        <div className="board">
-            {boxes}
+        <div className="boardContainer">
+            <div className="board">
+                {boxes}
+            </div>
+            <div className="players">
+                <ul>
+                    <li>x: {x}</li>
+                    <li>o: {o}</li>
+                </ul>
+            </div>
+            <div className="spectators">
+                <ul>
+                    {spectators}
+                </ul>
+            </div>
         </div>
     )
 }
