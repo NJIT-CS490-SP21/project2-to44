@@ -8,7 +8,7 @@ const socket = io()
 function Board(props) {
     const [marks, setMarks] = useState(0)
     const [board, setBoard] = useState(Array(9).fill(''))
-    const { player, players, initMoves } = props
+    const { player, players, initMoves, gameEnd } = props
     const [x, o] = players;
 
     const onClickBox = (pos) => {
@@ -36,6 +36,11 @@ function Board(props) {
     }
 
     useEffect(() => {
+        if (!gameEnd) {
+            setMarks(0)
+            setBoard(Array(9).fill(''))
+        }
+        
         while (initMoves.length) {
             const move = initMoves.shift()
             console.log(`marking ${move}`)
@@ -46,7 +51,7 @@ function Board(props) {
             console.log('Move event received!')
             markBox(data)
         });
-    }, [])
+    }, [gameEnd])
 
     const boxes = () => board.map((val, indx) => <Box key={indx} onclick={() => onClickBox(indx)} mark={val}/>)
 

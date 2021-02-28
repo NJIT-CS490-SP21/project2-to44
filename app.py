@@ -37,7 +37,9 @@ def index(filename):
 # When a client connects from this Socket connection, this function is run
 @socketio.on('login')
 def on_login(data):
-    players.append(data["name"])
+    if data["name"] not in player_set:
+        players.append(data["name"])
+        player_set.add(data["name"])
     socketio.emit('connected', {'players': players, 'moves': moves}, broadcast=True, include_self=True)
 
 # When a client disconnects from this Socket connection, this function is run
@@ -53,13 +55,14 @@ def on_move(data): # data is whatever arg you pass in your emit call on client
     socketio.emit('move',  data, broadcast=True, include_self=False)
     
     if len(moves) is 9:
-        socketio.emit('draw', {}, broadcast=True, include_self=True)
         clear_state()
+        socketio.emit('draw', {}, broadcast=True, include_self=True)
         return
     
     if check_win():
-        socketio.emit('win', {}, broadcast=True, include_self=True)
+        winner = (len(moves) % 2)
         clear_state()
+        socketio.emit('win', winner, broadcast=True, include_self=True)
 
 def clear_state():
     players.clear()

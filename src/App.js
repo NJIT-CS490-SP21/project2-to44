@@ -11,13 +11,14 @@ function App() {
   const [players, setPlayers] = useState([])
   const [initMoves, setInitMoves] = useState(null)
   const [gameEnd, setGameEnd] = useState(false)
+  const [winner, setWinner] = useState(null)
   const inputRef = useRef(null)
 
   function onClickButton() {
-    if (inputRef != null) {
-      const name = inputRef.current.value;
+    if (inputRef != null || player) {
+      const name = player ? player : inputRef.current.value;
 
-      setPlayer(prevPlayer => name)
+      setPlayer(name)
       socket.emit('login', { name: name })
     }
   }
@@ -26,7 +27,11 @@ function App() {
     socket.on('connected', (data) => {
       setPlayers(data.players)
       setInitMoves(data.moves)
-      setGameEnd(false)
+      
+      setPlayer(player => {
+        if (data.players.find((v) => v === player )) setGameEnd(false)
+        return player
+      })
     })
 
     socket.on('draw', (data) => {
@@ -36,33 +41,33 @@ function App() {
 
     socket.on('win', (data) => {
       console.log("Win")
+      setWinner(data)
       setGameEnd(true)
     })
   }, [])
   
   const gePrompt = () => {
     if (gameEnd) {
+      console.log(players[winner])
       return (
         <div>
-          <p>{}</p>
-          <a href="#" onClick={() => { setInitMoves([]) }}>Play, again!</a>
+          <p>{players[winner]} wins!</p>
+          <a href="#" onClick={() => { onClickButton(); setInitMoves([]); }}>Play, again!</a>
         </div>
       )
     } else {
       return (<div/>)
     }
   }
-
+  
   if (player && initMoves) {
-    console.log(initMoves)
     return (
       <div>
-        <Board initMoves={initMoves} player={player} players={players} />
+        <Board gameEnd={gameEnd} initMoves={initMoves} player={player} players={players} />
         {gePrompt()}
       </div>
       )
   }
-
 
   return (
     <div>
