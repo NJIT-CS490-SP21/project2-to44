@@ -15,6 +15,19 @@ socketio = SocketIO(
 )
 
 players = list()
+player_set = set()
+moves = list()
+
+lines = [
+    set([0, 1, 2]),
+    set([3, 4, 5]),
+    set([6, 7, 8]),
+    set([0, 3, 6]),
+    set([1, 4, 7]),
+    set([2, 5, 8]),
+    set([0, 4, 8]),
+    set([2, 4, 6]),
+]
 
 @app.route('/', defaults={"filename": "index.html"})
 @app.route('/<path:filename>')
@@ -24,22 +37,45 @@ def index(filename):
 # When a client connects from this Socket connection, this function is run
 @socketio.on('login')
 def on_login(data):
-    str(data)
     players.append(data["name"])
-    socketio.emit('connected', players, broadcast=True, include_self=True)
+    socketio.emit('connected', {'players': players, 'moves': moves}, broadcast=True, include_self=True)
 
 # When a client disconnects from this Socket connection, this function is run
 @socketio.on('disconnect')
 def on_disconnect():
     print('User disconnected!')
 
-# When a client emits the event 'chat' to the server, this function is run
-# 'chat' is a custom event name that we just decided
 @socketio.on('move')
-def on_chat(data): # data is whatever arg you pass in your emit call on client
+def on_move(data): # data is whatever arg you pass in your emit call on client
     # This emits the 'chat' event from the server to all clients except for
     # the client that emmitted the event that triggered this function
+    moves.append(data)
     socketio.emit('move',  data, broadcast=True, include_self=False)
+    
+    if len(moves) is 9:
+        socketio.emit('draw', {}, broadcast=True, include_self=True)
+        clear_state()
+        return
+    
+    if check_win():
+        socketio.emit('win', {}, broadcast=True, include_self=True)
+        clear_state()
+
+def clear_state():
+    players.clear()
+    player_set.clear()
+    moves.clear()
+
+def check_win():
+    player_moves = set(moves[(0 if (len(moves) % 2) else 1):][::2])
+    print(player_moves)
+    
+    for line in lines:
+        if len(player_moves.intersection(line)) == 3:
+            return True
+    
+    return False
+    
 
 # Note that we don't call app.run anymore. We call socketio.run with app arg
 socketio.run(

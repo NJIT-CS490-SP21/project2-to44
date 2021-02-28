@@ -8,37 +8,62 @@ const socket = io(); // Connects to socket connection
 
 function App() {
   const [player, setPlayer] = useState(null)
-  const [players, setPlayers] = useState([]); // State variable, list of messages
-  const inputRef = useRef(null); // Reference to <input> element
+  const [players, setPlayers] = useState([])
+  const [initMoves, setInitMoves] = useState(null)
+  const [gameEnd, setGameEnd] = useState(false)
+  const inputRef = useRef(null)
 
   function onClickButton() {
     if (inputRef != null) {
       const name = inputRef.current.value;
-      // If your own client sends a message, we add it to the list of messages to 
-      // render it on the UI.
-      setPlayer(prevPlayer => name);
-      socket.emit('login', { name: name });
+
+      setPlayer(prevPlayer => name)
+      socket.emit('login', { name: name })
     }
   }
 
-  // The function inside useEffect is only run whenever any variable in the array
-  // (passed as the second arg to useEffect) changes. Since this array is empty
-  // here, then the function will only run once at the very beginning of mounting.
   useEffect(() => {
-    // Listening for a chat event emitted by the server. If received, we
-    // run the code in the function that is passed in as the second arg
     socket.on('connected', (data) => {
-      // If the server sends a message (on behalf of another client), then we
-      // add it to the list of messages to render it on the UI.
-      setPlayers(data)
-    });
-  }, []);
+      setPlayers(data.players)
+      setInitMoves(data.moves)
+      setGameEnd(false)
+    })
+
+    socket.on('draw', (data) => {
+      console.log("Draw")
+      setGameEnd(true)
+    })
+
+    socket.on('win', (data) => {
+      console.log("Win")
+      setGameEnd(true)
+    })
+  }, [])
   
-  if (player) {
-    return ( <Board player={player} players={players} /> )
+  const gePrompt = () => {
+    if (gameEnd) {
+      return (
+        <div>
+          <p>{}</p>
+          <a href="#" onClick={() => { setInitMoves([]) }}>Play, again!</a>
+        </div>
+      )
+    } else {
+      return (<div/>)
+    }
   }
 
-  
+  if (player && initMoves) {
+    console.log(initMoves)
+    return (
+      <div>
+        <Board initMoves={initMoves} player={player} players={players} />
+        {gePrompt()}
+      </div>
+      )
+  }
+
+
   return (
     <div>
       <h3>Name: </h3>
@@ -48,4 +73,4 @@ function App() {
   )
 }
 
-export default App;
+export default App
