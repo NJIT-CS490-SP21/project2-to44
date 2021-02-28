@@ -1,8 +1,6 @@
-import logo from './logo.svg';
-import './App.css';
-import Board from './Board';
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import io from 'socket.io-client';
+import Board from './Board';
 
 const socket = io(); // Connects to socket connection
 
@@ -28,19 +26,17 @@ function App() {
       setPlayers(data.players);
       setInitMoves(data.moves);
 
-      setPlayer((player) => {
-        if (data.players.find((v) => v === player)) setGameEnd(false);
-        return player;
+      setPlayer((p) => {
+        if (data.players.find((v) => v === p)) setGameEnd(false);
+        return p;
       });
     });
 
-    socket.on('draw', (data) => {
-      console.log('Draw');
+    socket.on('draw', () => {
       setGameEnd(true);
     });
 
     socket.on('win', (data) => {
-      console.log('Win');
       setWinner(data);
       setGameEnd(true);
     });
@@ -48,15 +44,12 @@ function App() {
 
   const gePrompt = () => {
     if (gameEnd) {
-      console.log(players[winner]);
       return (
         <div>
           <p>
-            {players[winner]}
-            {' '}
-            wins!
+            {`Player ${players[winner]} wins!`}
           </p>
-          <a href="#" onClick={() => { onClickButton(); setInitMoves([]); }}>Play, again!</a>
+          <button type="button" onClick={() => { onClickButton(); setInitMoves([]); }}>Play, again!</button>
         </div>
       );
     }
@@ -76,7 +69,7 @@ function App() {
     <div>
       <h3>Name: </h3>
       <input ref={inputRef} type="text" />
-      <a href="#" onClick={() => onClickButton()}>play!</a>
+      <button type="button" onClick={() => onClickButton()}>play!</button>
     </div>
   );
 }
