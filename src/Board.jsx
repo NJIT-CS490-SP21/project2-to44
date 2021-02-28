@@ -75,12 +75,10 @@ function Board(props) {
         <ul style={{ listStyleType: 'none' }}>
           <li>Players</li>
           <li>
-            x:
-            {x}
+            {`x: ${x}`}
           </li>
           <li>
-            o:
-            {o}
+            {`o: ${o}`}
           </li>
         </ul>
       </div>

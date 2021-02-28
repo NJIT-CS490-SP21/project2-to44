@@ -64,7 +64,7 @@ def on_move(data):  # data is whatever arg you pass in your emit call on client
         return
 
     if check_win():
-        winner = len(moves) % 2
+        winner = (len(moves) - 1) % 2
         clear_state()
         socketio.emit("win", winner, broadcast=True, include_self=True)
 
