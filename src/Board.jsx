@@ -72,7 +72,7 @@ function Board(props) {
         { boxes }
       </div>
       <div className="players">
-        <ul style={{ 'list-style-type': 'none' }}>
+        <ul style={{ listStyleType: 'none' }}>
           <li>Players</li>
           <li>
             x:
@@ -85,7 +85,7 @@ function Board(props) {
         </ul>
       </div>
       <div className="spectators">
-        <ul style={{ 'list-style-type': 'none' }}>
+        <ul style={{ listStyleType: 'none' }}>
           <li>Spectators</li>
           {spectators}
         </ul>
