@@ -37,8 +37,10 @@ function App() {
     });
 
     socket.on('win', (data) => {
-      setWinner(data);
-      setGameEnd(true);
+      setGameEnd(() => {
+        setWinner(data);
+        return true;
+      });
     });
   }, []);
 
