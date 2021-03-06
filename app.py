@@ -55,8 +55,10 @@ def on_disconnect():
 def on_move(data):  # data is whatever arg you pass in your emit call on client
     # This emits the 'chat' event from the server to all clients except for
     # the client that emmitted the event that triggered this function
-    moves.append(data)
-    socketio.emit("move", data, broadcast=True, include_self=False)
+    
+    if (data not in moves):
+        moves.append(data)
+        socketio.emit("move", data, broadcast=True, include_self=True)
 
     if len(moves) is 9:
         clear_state()

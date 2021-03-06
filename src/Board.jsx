@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import io from 'socket.io-client';
 import PropTypes from 'prop-types';
 import Box from './Box';
 import './Board.css';
 
-const socket = io();
-
 function Board(props) {
   const [marks, setMarks] = useState(0);
   const [board, setBoard] = useState(Array(9).fill(''));
+  const { socket } = props;
 
   const {
     player, players, initMoves, gameEnd,
@@ -35,7 +33,6 @@ function Board(props) {
 
   const onClickBox = (pos) => {
     if (isTurn()) {
-      markBox(pos);
       socket.emit('move', pos);
     }
   };
@@ -97,6 +94,7 @@ Board.propTypes = {
   players: PropTypes.arrayOf(PropTypes.string).isRequired,
   initMoves: PropTypes.arrayOf(PropTypes.number).isRequired,
   gameEnd: PropTypes.bool.isRequired,
+  socket: PropTypes.any.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 export default Board;

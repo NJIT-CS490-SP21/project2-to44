@@ -61,7 +61,13 @@ function App() {
   if (player && initMoves) {
     return (
       <div>
-        <Board gameEnd={gameEnd} initMoves={initMoves} player={player} players={players} />
+        <Board
+          gameEnd={gameEnd}
+          initMoves={initMoves}
+          player={player}
+          players={players}
+          socket={socket}
+        />
         {gePrompt()}
       </div>
     );
