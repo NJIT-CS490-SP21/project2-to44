@@ -32,7 +32,7 @@ function Board(props) {
   };
 
   const onClickBox = (pos) => {
-    if (isTurn()) {
+    if (isTurn() && !gameEnd) {
       socket.emit('move', pos);
     }
   };
@@ -63,6 +63,7 @@ function Board(props) {
       <div className="columns is-gapless is-multiline is-mobile">
         { boxes }
       </div>
+      {`${(marks % 2) ? 'o' : 'x'}'s turn`}
     </div>
   );
 }

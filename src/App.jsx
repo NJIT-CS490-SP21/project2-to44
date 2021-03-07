@@ -33,6 +33,7 @@ function App() {
     });
 
     socket.on('draw', () => {
+      setWinner(null);
       setGameEnd(true);
     });
 
