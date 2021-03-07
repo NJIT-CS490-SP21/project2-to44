@@ -5,7 +5,11 @@ import PropTypes from 'prop-types';
 function Box(props) {
   const { onclick, mark } = props;
 
-  return <button type="button" onClick={onclick} className="box">{mark}</button>;
+  return (
+    <button href="#" type="button" className="column tile is-one-third is-clickable" onClick={onclick}>
+      {mark}
+    </button>
+  );
 }
 
 Box.propTypes = {

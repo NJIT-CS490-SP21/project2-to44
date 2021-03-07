@@ -44,41 +44,87 @@ function App() {
     });
   }, []);
 
-  const gePrompt = () => {
+  const getPrompt = () => {
     if (gameEnd) {
       return (
-        <div>
+        <div className="content is-medium">
           <p>
-            {`Player ${players[winner]} wins!`}
+            {players[winner] ? `Player ${players[winner]} wins!` : 'It\'s a tie!'}
           </p>
-          <button type="button" onClick={() => { onClickButton(); setInitMoves([]); }}>Play, again!</button>
+          <button className="button" type="button" onClick={() => { onClickButton(); setInitMoves([]); }}>Play, again!</button>
         </div>
       );
     }
     return (<div />);
   };
 
+  const getPlayers = () => {
+    const [x, o] = players;
+
+    return (
+      <div className="content">
+        {x ? (
+          <h5>
+            {'Player x: '}
+            <span className={`is-medium tag is-light ${(player === x) ? 'is-link' : ''}`}>{x}</span>
+          </h5>
+        ) : null }
+        {o ? (
+          <h5>
+            {'Player o: '}
+            <span className={`is-medium tag is-light ${(player === o) ? 'is-link' : ''}`}>{o}</span>
+          </h5>
+        ) : null }
+        <h5>Spectators:</h5>
+        <div className="tags">
+          { players.slice(2).map((p) => {
+            const classes = `is-medium tag is-light ${(player === p) ? 'is-link' : ''}`;
+            return (<span className={classes}>{p}</span>);
+          })}
+        </div>
+      </div>
+    );
+  };
+
   if (player && initMoves) {
     return (
-      <div>
-        <Board
-          gameEnd={gameEnd}
-          initMoves={initMoves}
-          player={player}
-          players={players}
-          socket={socket}
-        />
-        {gePrompt()}
-      </div>
+      <section className="section">
+        <div className="container">
+          <div className="columns">
+            <div className="column">
+              <Board
+                gameEnd={gameEnd}
+                initMoves={initMoves}
+                player={player}
+                players={players}
+                socket={socket}
+              />
+            </div>
+            <div className="column">
+              {getPlayers()}
+              {getPrompt()}
+            </div>
+          </div>
+        </div>
+      </section>
     );
   }
 
   return (
-    <div>
-      <h3>Name: </h3>
-      <input ref={inputRef} type="text" />
-      <button type="button" onClick={() => onClickButton()}>play!</button>
-    </div>
+    <section className="section">
+      <div className="container">
+        <div className="field has-addons">
+          <div className="control">
+            <input className="input" ref={inputRef} type="text" placeholder="Username" />
+          </div>
+          <div className="control">
+            <button className="button" type="button" onClick={() => onClickButton()}>
+              Play!
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
 

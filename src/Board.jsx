@@ -58,32 +58,10 @@ function Board(props) {
     return <Box key={key} onclick={() => onClickBox(indx)} mark={val} />;
   });
 
-  const spectators = players.slice(2).map((el, indx) => {
-    const key = indx.toString();
-    return <li key={key}>{el}</li>;
-  });
-
   return (
-    <div className="boardContainer">
-      <div className="board">
+    <div className="board">
+      <div className="columns is-gapless is-multiline is-mobile">
         { boxes }
-      </div>
-      <div className="players">
-        <ul style={{ listStyleType: 'none' }}>
-          <li>Players</li>
-          <li>
-            {`x: ${x}`}
-          </li>
-          <li>
-            {`o: ${o}`}
-          </li>
-        </ul>
-      </div>
-      <div className="spectators">
-        <ul style={{ listStyleType: 'none' }}>
-          <li>Spectators</li>
-          {spectators}
-        </ul>
       </div>
     </div>
   );

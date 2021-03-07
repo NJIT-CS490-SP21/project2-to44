@@ -1,19 +1,22 @@
 .board {
-	width: 300px; /* Total horizontal dimensions */
-	height: 300px; /* Total vertical dimensions */
-	display: grid; /* Enables CSS Grid */ 
-	grid-template-columns: repeat(3, 1fr); /* Total horizontal space broken into 3 columns */
-  grid-template-rows: repeat(3, 1fr); /* Total vertical space broken into 3 rows */
+	width: 100%; /* Total horizontal dimensions */
 }
 
-.box {
+.board:before {
+  content: "";
+	float: left;
+	padding-top: 100%; 	/* initial ratio of 1:1*/
+}
+
+.column.tile {
   display: flex;
+  border: 1px solid black;
   align-items: center;
-  border: 1px solid black; /* Shows the lines in the CSS grid */
   justify-content: center;
 }
 
-.boardContainer {
-  display: flex;
-  flex-direction: row;
+.column.tile:before {
+	content: "";
+	float: left;
+	padding-top: 100%; 	/* initial ratio of 1:1*/
 }
