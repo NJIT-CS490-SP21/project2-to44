@@ -48,12 +48,14 @@ function App() {
   }, []);
 
   const getLoaderboard = () => {
-    const rows = leaderboard.map((row) => (
-      <tr>
+    const rows = leaderboard.map((row, indx) => (
+      <tr className={row.username === player ? 'is-selected' : ''}>
+        <td>{indx + 1}</td>
         <td>{row.username}</td>
         <td>{row.score}</td>
       </tr>
     ));
+
     return (
       <div className={`modal ${showLeaderboard ? 'is-active' : ''}`}>
         <div role="presentation" className="modal-background" onClick={() => { setShowLeaderboard(!showLeaderboard); }} />
@@ -66,6 +68,7 @@ function App() {
             <table className="table is-fullwidth">
               <thead>
                 <tr>
+                  <th><abbr title="Position">Pos</abbr></th>
                   <th><abbr title="Username">Username</abbr></th>
                   <th><abbr title="Score">Score</abbr></th>
                 </tr>
