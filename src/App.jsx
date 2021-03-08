@@ -11,6 +11,8 @@ function App() {
   const [gameEnd, setGameEnd] = useState(false);
   const [winner, setWinner] = useState(null);
   const inputRef = useRef(null);
+  const [showLeaderboard, setShowLeaderboard] = useState(false);
+  const [leaderboard, setLeaderboard] = useState([]);
 
   function onClickButton() {
     if (inputRef != null || player) {
@@ -45,14 +47,63 @@ function App() {
     });
   }, []);
 
-  const getPrompt = () => {
+  const getLoaderboard = () => {
+    const rows = leaderboard.map((row) => (
+      <tr>
+        <td>{row.username}</td>
+        <td>{row.score}</td>
+      </tr>
+    ));
+    return (
+      <div className={`modal ${showLeaderboard ? 'is-active' : ''}`}>
+        <div role="presentation" className="modal-background" onClick={() => { setShowLeaderboard(!showLeaderboard); }} />
+        <div className="modal-card">
+          <header className="modal-card-head">
+            <p className="modal-card-title">Leaderboard</p>
+            <button type="button" onClick={() => { setShowLeaderboard(!showLeaderboard); }} className="delete" aria-label="close" />
+          </header>
+          <section className="modal-card-body">
+            <table className="table is-fullwidth">
+              <thead>
+                <tr>
+                  <th><abbr title="Username">Username</abbr></th>
+                  <th><abbr title="Score">Score</abbr></th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows}
+                <tr />
+              </tbody>
+            </table>
+          </section>
+        </div>
+      </div>
+    );
+  };
+
+  const fetchLaderboard = async () => {
+    const res = await fetch('/leaderboard');
+    const json = await res.json();
+    setLeaderboard(json);
+  };
+
+  const endPrompt = () => {
     if (gameEnd) {
+      fetchLaderboard();
+
       return (
         <div className="content is-medium">
           <p>
             {players[winner] ? `Player ${players[winner]} wins!` : 'It\'s a tie!'}
           </p>
-          <button className="button" type="button" onClick={() => { onClickButton(); setInitMoves([]); }}>Play, again!</button>
+          <div className="field is-grouped">
+            <p className="control">
+              <button className="button" type="button" onClick={() => { setShowLeaderboard(!showLeaderboard); }}>Leaderboard</button>
+            </p>
+            <p className="control">
+              <button className="button" type="button" onClick={() => { onClickButton(); setInitMoves([]); }}>Play, again!</button>
+            </p>
+          </div>
         </div>
       );
     }
@@ -103,7 +154,8 @@ function App() {
             </div>
             <div className="column">
               {getPlayers()}
-              {getPrompt()}
+              {endPrompt()}
+              {getLoaderboard()}
             </div>
           </div>
         </div>
