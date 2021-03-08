@@ -1,11 +1,24 @@
 import os
+from json import dumps, loads
 from flask import Flask, send_from_directory, json, session
 from flask_socketio import SocketIO
 from flask_cors import CORS
+from dotenv import load_dotenv
+
+from models import db, Player
+
+load_dotenv(dotenv_path="sql.env")
 
 app = Flask(__name__, static_folder="./build/static")
 
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
+
+# Point SQLAlchemy to your Heroku database
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
+# Gets rid of a warning
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+db.init_app(app)
 
 socketio = SocketIO(app, cors_allowed_origins="*", json=json, manage_session=False)
 
@@ -31,12 +44,26 @@ def index(filename):
     return send_from_directory("./build", filename)
 
 
+@app.route("/leaderboard")
+def leaderboard():
+    plist = Player.query.order_by(Player.score.desc()).limit(5).all()
+    return dumps(list(map(lambda x: loads(str(x)), plist)))
+
+
 # When a client connects from this Socket connection, this function is run
 @socketio.on("login")
 def on_login(data):
-    if data["name"] not in player_set:
-        players.append(data["name"])
-        player_set.add(data["name"])
+    name = data["name"]
+
+    if name not in player_set:
+        players.append(name)
+        player_set.add(name)
+
+    if not Player.query.filter_by(username=name).first():
+        p = Player(username=name, score=100)
+        db.session.add(p)
+        db.session.commit()
+
     socketio.emit(
         "connected",
         {"players": players, "moves": moves},
@@ -55,13 +82,22 @@ def on_disconnect():
 def on_move(data):  # data is whatever arg you pass in your emit call on client
     # This emits the 'chat' event from the server to all clients except for
     # the client that emmitted the event that triggered this function
-    
-    if (data not in moves):
+
+    if data not in moves:
         moves.append(data)
         socketio.emit("move", data, broadcast=True, include_self=True)
-        
+
     if check_win():
         winner = (len(moves) - 1) % 2
+
+        w = Player.query.filter_by(username=players[winner]).first()
+        w.score += 1
+
+        l = Player.query.filter_by(username=players[0 if winner else 1]).first()
+        l.score -= 1
+
+        db.session.commit()
+
         clear_state()
         socketio.emit("win", winner, broadcast=True, include_self=True)
         return
