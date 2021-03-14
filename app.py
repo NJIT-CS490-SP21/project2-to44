@@ -94,17 +94,18 @@ def on_disconnect():
 
 
 @socketio.on("move")
-def on_move(data):
+def on_move(data, move_arr=moves):
     """
     Socket endpoint for when a player sends a move on the board.
     """
 
-    if data not in moves:
-        moves.append(data)
-        socketio.emit("move", data, broadcast=True, include_self=True)
+    if data not in move_arr:
+        move_arr.append(data)
+        if __name__ == "__main__":
+            socketio.emit("move", data, broadcast=True, include_self=True)
 
-    if check_win():
-        winner = (len(moves) - 1) % 2
+    if check_win(move_arr):
+        winner = (len(move_arr) - 1) % 2
 
         w_player = Player.query.filter_by(username=players[winner]).first()
         w_player.score += 1
@@ -112,15 +113,19 @@ def on_move(data):
         l_player = Player.query.filter_by(username=players[0 if winner else 1]).first()
         l_player.score -= 1
 
-        db.session.commit()
+        if __name__ == "__main__":
+            db.session.commit()
 
-        clear_state()
-        socketio.emit("win", winner, broadcast=True, include_self=True)
+            clear_state()
+            socketio.emit("win", winner, broadcast=True, include_self=True)
         return
 
-    if len(moves) == 9:
-        clear_state()
-        socketio.emit("draw", {}, broadcast=True, include_self=True)
+    if len(move_arr) == 9:
+        if __name__ == "__main__":
+            clear_state()
+            socketio.emit("draw", {}, broadcast=True, include_self=True)
+        else:
+            return "Tie"
 
 
 def clear_state():
@@ -132,11 +137,11 @@ def clear_state():
     moves.clear()
 
 
-def check_win():
+def check_win(move_arr):
     """
     Checks for any player winning conditions.
     """
-    player_moves = set(moves[(0 if (len(moves) % 2) else 1) :][::2])
+    player_moves = set(move_arr[(0 if (len(move_arr) % 2) else 1) :][::2])
     print(player_moves)
 
     for line in lines:
@@ -146,9 +151,10 @@ def check_win():
     return False
 
 
-# Note that we don't call app.run anymore. We call socketio.run with app arg
-socketio.run(
-    app,
-    host=os.getenv("IP", "0.0.0.0"),
-    port=8081 if os.getenv("C9_PORT") else int(os.getenv("PORT", "8081")),
-)
+if __name__ == "__main__":
+    # Note that we don't call app.run anymore. We call socketio.run with app arg
+    socketio.run(
+        app,
+        host=os.getenv("IP", "0.0.0.0"),
+        port=8081 if os.getenv("C9_PORT") else int(os.getenv("PORT", "8081")),
+    )
