@@ -6,7 +6,12 @@ function Box(props) {
   const { onclick, mark } = props;
 
   return (
-    <button href="#" type="button" className="column tile is-one-third is-clickable" onClick={onclick}>
+    <button
+      href="#"
+      type="button"
+      className="column tile is-one-third is-clickable"
+      onClick={onclick}
+    >
       {mark}
     </button>
   );

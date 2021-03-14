@@ -16,14 +16,16 @@ function Board(props) {
 
   const isTurn = () => {
     if (x !== player && o !== player) return false;
-    return (x === player && ((marks % 2) === 0)) || (o === player && ((marks % 2) === 1));
+    return (
+      (x === player && marks % 2 === 0) || (o === player && marks % 2 === 1)
+    );
   };
 
   const markBox = (pos) => {
     setMarks((m) => {
       setBoard((prevBoard) => {
         const nBoard = prevBoard.slice();
-        nBoard[pos] = (m % 2) ? 'o' : 'x';
+        nBoard[pos] = m % 2 ? 'o' : 'x';
         return nBoard;
       });
 
@@ -60,10 +62,8 @@ function Board(props) {
 
   return (
     <div className="board">
-      <div className="columns is-gapless is-multiline is-mobile">
-        { boxes }
-      </div>
-      {`${(marks % 2) ? 'o' : 'x'}'s turn`}
+      <div className="columns is-gapless is-multiline is-mobile">{boxes}</div>
+      {`${marks % 2 ? 'o' : 'x'}'s turn`}
     </div>
   );
 }

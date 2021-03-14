@@ -58,19 +58,38 @@ function App() {
 
     return (
       <div className={`modal ${showLeaderboard ? 'is-active' : ''}`}>
-        <div role="presentation" className="modal-background" onClick={() => { setShowLeaderboard(!showLeaderboard); }} />
+        <div
+          role="presentation"
+          className="modal-background"
+          onClick={() => {
+            setShowLeaderboard(!showLeaderboard);
+          }}
+        />
         <div className="modal-card">
           <header className="modal-card-head">
             <p className="modal-card-title">Leaderboard</p>
-            <button type="button" onClick={() => { setShowLeaderboard(!showLeaderboard); }} className="delete" aria-label="close" />
+            <button
+              type="button"
+              onClick={() => {
+                setShowLeaderboard(!showLeaderboard);
+              }}
+              className="delete"
+              aria-label="close"
+            />
           </header>
           <section className="modal-card-body">
             <table className="table is-fullwidth">
               <thead>
                 <tr>
-                  <th><abbr title="Position">Pos</abbr></th>
-                  <th><abbr title="Username">Username</abbr></th>
-                  <th><abbr title="Score">Score</abbr></th>
+                  <th>
+                    <abbr title="Position">Pos</abbr>
+                  </th>
+                  <th>
+                    <abbr title="Username">Username</abbr>
+                  </th>
+                  <th>
+                    <abbr title="Score">Score</abbr>
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -97,20 +116,39 @@ function App() {
       return (
         <div className="content is-medium">
           <p>
-            {players[winner] ? `Player ${players[winner]} wins!` : 'It\'s a tie!'}
+            {players[winner]
+              ? `Player ${players[winner]} wins!`
+              : "It's a tie!"}
           </p>
           <div className="field is-grouped">
             <p className="control">
-              <button className="button" type="button" onClick={() => { setShowLeaderboard(!showLeaderboard); }}>Leaderboard</button>
+              <button
+                className="button"
+                type="button"
+                onClick={() => {
+                  setShowLeaderboard(!showLeaderboard);
+                }}
+              >
+                Leaderboard
+              </button>
             </p>
             <p className="control">
-              <button className="button" type="button" onClick={() => { onClickButton(); setInitMoves([]); }}>Play, again!</button>
+              <button
+                className="button"
+                type="button"
+                onClick={() => {
+                  onClickButton();
+                  setInitMoves([]);
+                }}
+              >
+                Play, again!
+              </button>
             </p>
           </div>
         </div>
       );
     }
-    return (<div />);
+    return <div />;
   };
 
   const getPlayers = () => {
@@ -121,20 +159,34 @@ function App() {
         {x ? (
           <h5>
             {'Player x: '}
-            <span className={`is-medium tag is-light ${(player === x) ? 'is-link' : ''}`}>{x}</span>
+            <span
+              className={`is-medium tag is-light ${
+                player === x ? 'is-link' : ''
+              }`}
+            >
+              {x}
+            </span>
           </h5>
-        ) : null }
+        ) : null}
         {o ? (
           <h5>
             {'Player o: '}
-            <span className={`is-medium tag is-light ${(player === o) ? 'is-link' : ''}`}>{o}</span>
+            <span
+              className={`is-medium tag is-light ${
+                player === o ? 'is-link' : ''
+              }`}
+            >
+              {o}
+            </span>
           </h5>
-        ) : null }
+        ) : null}
         <h5>Spectators:</h5>
         <div className="tags">
-          { players.slice(2).map((p) => {
-            const classes = `is-medium tag is-light ${(player === p) ? 'is-link' : ''}`;
-            return (<span className={classes}>{p}</span>);
+          {players.slice(2).map((p) => {
+            const classes = `is-medium tag is-light ${
+              player === p ? 'is-link' : ''
+            }`;
+            return <span className={classes}>{p}</span>;
           })}
         </div>
       </div>
@@ -171,10 +223,19 @@ function App() {
       <div className="container">
         <div className="field has-addons">
           <div className="control">
-            <input className="input" ref={inputRef} type="text" placeholder="Username" />
+            <input
+              className="input"
+              ref={inputRef}
+              type="text"
+              placeholder="Username"
+            />
           </div>
           <div className="control">
-            <button className="button" type="button" onClick={() => onClickButton()}>
+            <button
+              className="button"
+              type="button"
+              onClick={() => onClickButton()}
+            >
               Play!
             </button>
           </div>

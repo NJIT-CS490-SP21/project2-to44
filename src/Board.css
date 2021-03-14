@@ -1,11 +1,11 @@
 .board {
-	width: 100%; /* Total horizontal dimensions */
+  width: 100%; /* Total horizontal dimensions */
 }
 
 .board:before {
   content: "";
-	float: left;
-	padding-top: 100%; 	/* initial ratio of 1:1*/
+  float: left;
+  padding-top: 100%; /* initial ratio of 1:1*/
 }
 
 .column.tile {
@@ -16,7 +16,7 @@
 }
 
 .column.tile:before {
-	content: "";
-	float: left;
-	padding-top: 100%; 	/* initial ratio of 1:1*/
+  content: "";
+  float: left;
+  padding-top: 100%; /* initial ratio of 1:1*/
 }
