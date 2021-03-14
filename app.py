@@ -1,6 +1,9 @@
+"""
+Main entry point for the app server.
+"""
 import os
 from json import dumps, loads
-from flask import Flask, send_from_directory, json, session
+from flask import Flask, send_from_directory, json
 from flask_socketio import SocketIO
 from flask_cors import CORS
 from dotenv import load_dotenv
@@ -41,11 +44,17 @@ lines = [
 @app.route("/", defaults={"filename": "index.html"})
 @app.route("/<path:filename>")
 def index(filename):
+    """
+    Serves the web application.
+    """
     return send_from_directory("./build", filename)
 
 
 @app.route("/leaderboard")
 def leaderboard():
+    """
+    Responds with the updated leaderboard.
+    """
     plist = Player.query.order_by(Player.score.desc()).limit(5).all()
     return dumps(list(map(lambda x: loads(str(x)), plist)))
 
@@ -53,6 +62,9 @@ def leaderboard():
 # When a client connects from this Socket connection, this function is run
 @socketio.on("login")
 def on_login(data):
+    """
+    Socket endpoint for when a user logs into a game.
+    """
     name = data["name"]
 
     if name not in player_set:
@@ -60,8 +72,8 @@ def on_login(data):
         player_set.add(name)
 
     if not Player.query.filter_by(username=name).first():
-        p = Player(username=name, score=100)
-        db.session.add(p)
+        player = Player(username=name, score=100)
+        db.session.add(player)
         db.session.commit()
 
     socketio.emit(
@@ -75,13 +87,17 @@ def on_login(data):
 # When a client disconnects from this Socket connection, this function is run
 @socketio.on("disconnect")
 def on_disconnect():
+    """
+    Called once a user disconnects.
+    """
     print("User disconnected!")
 
 
 @socketio.on("move")
-def on_move(data):  # data is whatever arg you pass in your emit call on client
-    # This emits the 'chat' event from the server to all clients except for
-    # the client that emmitted the event that triggered this function
+def on_move(data):
+    """
+    Socket endpoint for when a player sends a move on the board.
+    """
 
     if data not in moves:
         moves.append(data)
@@ -90,11 +106,11 @@ def on_move(data):  # data is whatever arg you pass in your emit call on client
     if check_win():
         winner = (len(moves) - 1) % 2
 
-        w = Player.query.filter_by(username=players[winner]).first()
-        w.score += 1
+        w_player = Player.query.filter_by(username=players[winner]).first()
+        w_player.score += 1
 
-        l = Player.query.filter_by(username=players[0 if winner else 1]).first()
-        l.score -= 1
+        l_player = Player.query.filter_by(username=players[0 if winner else 1]).first()
+        l_player.score -= 1
 
         db.session.commit()
 
@@ -102,18 +118,24 @@ def on_move(data):  # data is whatever arg you pass in your emit call on client
         socketio.emit("win", winner, broadcast=True, include_self=True)
         return
 
-    if len(moves) is 9:
+    if len(moves) == 9:
         clear_state()
         socketio.emit("draw", {}, broadcast=True, include_self=True)
 
 
 def clear_state():
+    """
+    Clears all stateful variables on the server.
+    """
     players.clear()
     player_set.clear()
     moves.clear()
 
 
 def check_win():
+    """
+    Checks for any player winning conditions.
+    """
     player_moves = set(moves[(0 if (len(moves) % 2) else 1) :][::2])
     print(player_moves)
 
@@ -128,5 +150,5 @@ def check_win():
 socketio.run(
     app,
     host=os.getenv("IP", "0.0.0.0"),
-    port=8081 if os.getenv("C9_PORT") else int(os.getenv("PORT", 8081)),
+    port=8081 if os.getenv("C9_PORT") else int(os.getenv("PORT", "8081")),
 )
