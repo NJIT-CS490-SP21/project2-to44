@@ -22,6 +22,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db.init_app(app)
+db.create_all()
 
 socketio = SocketIO(app, cors_allowed_origins="*", json=json, manage_session=False)
 
