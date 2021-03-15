@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import socket from './socket';
 import Box from './Box';
 import './Board.css';
 
 function Board(props) {
   const [marks, setMarks] = useState(0);
   const [board, setBoard] = useState(Array(9).fill(''));
-  const { socket } = props;
 
   const {
     player, players, initMoves, gameEnd,
@@ -57,11 +57,11 @@ function Board(props) {
 
   const boxes = board.map((val, indx) => {
     const key = indx.toString();
-    return <Box key={key} onclick={() => onClickBox(indx)} mark={val} />;
+    return <Box testid={`box-${key}`} key={key} onclick={() => onClickBox(indx)} mark={val} />;
   });
 
   return (
-    <div className="board">
+    <div data-testid="board" className="board">
       <div className="columns is-gapless is-multiline is-mobile">{boxes}</div>
       {`${marks % 2 ? 'o' : 'x'}'s turn`}
     </div>
@@ -73,7 +73,6 @@ Board.propTypes = {
   players: PropTypes.arrayOf(PropTypes.string).isRequired,
   initMoves: PropTypes.arrayOf(PropTypes.number).isRequired,
   gameEnd: PropTypes.bool.isRequired,
-  socket: PropTypes.any.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 export default Board;

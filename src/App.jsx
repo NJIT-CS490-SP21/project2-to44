@@ -1,8 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import io from 'socket.io-client';
 import Board from './Board';
-
-const socket = io(); // Connects to socket connection
+import socket from './socket';
 
 function App() {
   const [player, setPlayer] = useState(null);
@@ -204,7 +202,6 @@ function App() {
                 initMoves={initMoves}
                 player={player}
                 players={players}
-                socket={socket}
               />
             </div>
             <div className="column">

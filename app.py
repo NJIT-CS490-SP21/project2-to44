@@ -23,8 +23,9 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db.init_app(app)
 
-with app.app_context():
-    db.create_all()
+if __name__ == "__main__":
+    with app.app_context():
+        db.create_all()
 
 socketio = SocketIO(app, cors_allowed_origins="*", json=json, manage_session=False)
 
@@ -121,7 +122,7 @@ def on_move(data, move_arr=moves):
 
             clear_state()
             socketio.emit("win", winner, broadcast=True, include_self=True)
-        return
+        return "Win"
 
     if len(move_arr) == 9:
         if __name__ == "__main__":
@@ -129,6 +130,8 @@ def on_move(data, move_arr=moves):
             socketio.emit("draw", {}, broadcast=True, include_self=True)
         else:
             return "Tie"
+
+    return "Continue"
 
 
 def clear_state():
