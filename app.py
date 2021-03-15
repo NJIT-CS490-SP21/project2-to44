@@ -1,6 +1,7 @@
 """
 Main entry point for the app server.
 """
+# pylint: disable=no-member
 import os
 from json import dumps, loads
 from flask import Flask, send_from_directory, json

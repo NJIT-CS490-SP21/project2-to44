@@ -1,6 +1,7 @@
 """
 Module containing all database models.
 """
+# pylint: disable=no-member
 from json import dumps
 from flask_sqlalchemy import SQLAlchemy
 
